@@ -56,3 +56,5 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 .eslintrc.js
 .prettierrc
+prisma/migrations/migration_lock.toml
+prisma/migrations/20241105134218_test/migration.sql
