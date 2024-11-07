@@ -45,14 +45,7 @@ export class AccountService {
       throw new Error('Account not found');
     }
     if(fromAccount.currency !== toAccount.currency) {
-      const toAccountCurrency = toAccount.currency.toLowerCase();
-      const fromAccountCurrency = fromAccount.currency.toLowerCase();
-      let response = await fetch(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${fromAccountCurrency}.json`);
-      if(!response.ok) throw new Error('Sorry, there was an error in currency conversion, please try again later.');
-
-      let json = await response.json();
-      let currencyExchangesRate = JSON.parse(JSON.stringify(json));
-      let exchangeRate = currencyExchangesRate[fromAccountCurrency][toAccountCurrency];
+      let exchangeRate = await this.getExchangeRate(fromAccount.currency, toAccount.currency);
       transferSum*= exchangeRate;
       userBalance*= exchangeRate;
     }
@@ -82,5 +75,56 @@ export class AccountService {
         }
       })
     ]);
+  }
+
+  async withdraw(accountId: number, amount: number) {
+    const account = await this.prisma.account.findFirst(
+      {
+        where: {
+          id: accountId
+        }
+      }
+    )
+    const balance = account.balance;
+    if(balance < amount) {
+      throw new Error('Insufficient funds');
+    }
+    return this.prisma.account.update({
+      where: {
+        id: accountId
+      },
+      data: {
+        balance: {
+          decrement: amount
+        }
+      }
+    });
+  }
+
+  async getBalance(accountId: number, toCurrency: string) {
+    const account = await this.prisma.account.findFirst({
+      where: {
+        id: accountId
+      }
+    });
+    let balance = account.balance;
+    if (account.currency !== toCurrency) {
+      let exchangeRate =await this.getExchangeRate(account.currency, toCurrency);
+      balance*= exchangeRate;
+    }
+
+    return balance;
+  }
+
+  async getExchangeRate(fromCurrency: string, toCurrency:string): Promise<number> {
+    let fromCurrencyFormated = fromCurrency.toLowerCase();
+    let toCurrencyFormated = toCurrency.toLowerCase();
+    let response = await fetch(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${fromCurrencyFormated}.json`);
+    if(!response.ok) throw new Error('Sorry, there was an error in currency conversion, please try again later.');
+
+    let json = await response.json();
+    let currencyExchangesRate = JSON.parse(JSON.stringify(json));
+    let exchangeRate = currencyExchangesRate[fromCurrencyFormated][toCurrencyFormated];
+    return exchangeRate;
   }
 }
