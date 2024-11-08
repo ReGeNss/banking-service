@@ -5,6 +5,7 @@ import { CloseAccountDto } from "./dtos/close-account.dto";
 import { TransferDto } from "./dtos/transfer.dto";
 import { WithdrawDto } from "./dtos/withdraw.dto";
 import { BalanceDto } from "./dtos/balance.dto";
+import { DepositHistoryDto } from "./dtos/deposit-history.dto";
 
 @Controller('account')
 export class AccountController {
@@ -13,6 +14,11 @@ export class AccountController {
   @Get('balance')
   balance(@Body() body:  BalanceDto) {
     return this.accountService.getBalance(body.accountId, body.currency);
+  }
+
+  @Get('depositHistory')
+  getDepositHistory(@Body() body: DepositHistoryDto ) {
+    return this.accountService.getDepositHistory(body.accountId);
   }
 
   @Post('open')

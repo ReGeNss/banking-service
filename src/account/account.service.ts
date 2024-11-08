@@ -5,6 +5,15 @@ import { PrismaService } from "../prisma.servise";
 export class AccountService {
   constructor(private prisma: PrismaService) {}
 
+  async getDepositHistory(accountId: number) {
+    const account = await this.prisma.account.findFirst({
+      where: {
+        id: accountId
+      }
+    });
+    return account.transactionsHistory;
+  }
+
   async openAccount(userId: number, currency: string) {
     return this.prisma.account.create({
       data: {
