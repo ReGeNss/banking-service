@@ -42,4 +42,13 @@ export class DepositService {
       }
     });
   }
+
+  async isAccountOwner(userId: number, accountId: number) {
+    const account = await this.prisma.account.findFirst({
+      where:{
+        id: accountId
+      }
+    })
+    return account.userId === userId;
+  }
 }

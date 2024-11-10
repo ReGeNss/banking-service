@@ -5,6 +5,15 @@ import { PrismaService } from "../prisma.servise";
 export class AccountService {
   constructor(private prisma: PrismaService) {}
 
+  async isAccountOwner(userId: number, accountId: number) {
+    const account = await this.prisma.account.findFirst({
+      where: {
+        id: accountId
+      }
+    });
+    return account.userId === userId;
+  }
+
   async getDepositHistory(accountId: number) {
     const account = await this.prisma.account.findFirst({
       where: {
