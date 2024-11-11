@@ -39,8 +39,8 @@ model Deposit {
 
 model Admin {
   id       Int      @id @default(autoincrement())
+  login    String   @unique
+  password String
   name     String
   surname  String
-  email    String   @unique
-  password String
 }
