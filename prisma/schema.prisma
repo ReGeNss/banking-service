@@ -22,7 +22,7 @@ model Account {
   currency            String
   balance             Float
   transactionsHistory String[]
-  user                User   @relation(fields: [userId], references: [id])
+  user                User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId              Int
   Deposits             Deposit[]
 }
@@ -33,6 +33,6 @@ model Deposit {
   term      Int
   percent  Float
   startDate DateTime
-  account   Account  @relation(fields: [accountId], references: [id])
+  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
   accountId Int
 }
