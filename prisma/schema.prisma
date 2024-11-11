@@ -36,3 +36,11 @@ model Deposit {
   account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
   accountId Int
 }
+
+model Admin {
+  id       Int      @id @default(autoincrement())
+  name     String
+  surname  String
+  email    String   @unique
+  password String
+}

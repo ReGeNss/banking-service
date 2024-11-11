@@ -1,10 +1,12 @@
-import { Controller, Body, Get, Post } from '@nestjs/common';
+import { Controller, Body, Get, Post, UseGuards } from "@nestjs/common";
 import { DepositService } from "./deposit.service";
 import { OpenDto } from "./dtos/open.dto";
 import { CalculateProfitDto } from './dtos/calculate-profit.dto';
 import { Public } from 'src/metadata.constants';
 import { CurrentUserId } from "../decorators/current-user.decorator";
+import { AuthGuard } from "../auth/auth.guard";
 
+@UseGuards(AuthGuard)
 @Controller('deposit')
 export class DepositController {
   constructor(private depositService: DepositService ) {}

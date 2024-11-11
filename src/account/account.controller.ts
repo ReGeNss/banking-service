@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete, Patch} from "@nestjs/common";
+import { Controller, Get, Post, Body, Delete, Patch, UseGuards } from "@nestjs/common";
 import { AccountService } from "./account.service";
 import { OpenAccountDto } from "./dtos/open-account.dto";
 import { CloseAccountDto } from "./dtos/close-account.dto";
@@ -7,7 +7,9 @@ import { WithdrawDto } from "./dtos/withdraw.dto";
 import { BalanceDto } from "./dtos/balance.dto";
 import { DepositHistoryDto } from "./dtos/deposit-history.dto";
 import {CurrentUserId } from "../decorators/current-user.decorator";
+import { AuthGuard } from "../auth/auth.guard";
 
+@UseGuards(AuthGuard)
 @Controller('account')
 export class AccountController {
   constructor(private accountService: AccountService) {}

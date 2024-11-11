@@ -7,16 +7,11 @@ import { DepositModule } from './deposit/deposit.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from "@nestjs/core";
 import { AuthGuard } from "./auth/auth.guard";
+import { AdminModule } from './admin/admin.module';
 
 @Module({
-  imports: [UserModule, AccountModule, DepositModule, AuthModule],
+  imports: [UserModule, AccountModule, DepositModule, AuthModule, AdminModule],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    }
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

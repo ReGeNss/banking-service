@@ -1,7 +1,9 @@
-import { Controller, Delete} from '@nestjs/common';
+import { Controller, Delete, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CurrentUserId } from "../decorators/current-user.decorator";
+import { AuthGuard } from "../auth/auth.guard";
 
+@UseGuards(AuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService ) {}
