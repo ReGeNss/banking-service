@@ -1,4 +1,4 @@
-import { Controller, Body, Get, Post, UseGuards } from "@nestjs/common";
+import { Controller, Body, Get, Post, UseGuards, ForbiddenException } from "@nestjs/common";
 import { DepositService } from "./deposit.service";
 import { OpenDto } from "./dtos/open.dto";
 import { CalculateProfitDto } from './dtos/calculate-profit.dto';
@@ -20,7 +20,7 @@ export class DepositController {
   @Post('open')
   openDeposit(@CurrentUserId() userId: number,@Body() body: OpenDto) {
     const isOwner = this.depositService.isAccountOwner(userId, body.accountId);
-    if(!isOwner) throw new Error('You are not the owner of this account');
+    if(!isOwner) throw new ForbiddenException('You are not the owner of this account');
     return this.depositService.createDeposit(body.accountId, body.amount, body.term, body.percent);
   }
 

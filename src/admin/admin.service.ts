@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable, UnauthorizedException, BadRequestException } from "@nestjs/common";
 import { PrismaService } from "../prisma.servise";
 import { JwtService } from "@nestjs/jwt";
 
@@ -13,7 +13,7 @@ export class AdminService {
       }
     });
     if(!admin) {
-      throw new Error('Administrator not found');
+      throw new BadRequestException('Administrator not found');
     }
     if(admin.password !== password) {
       throw new UnauthorizedException('Invalid password');

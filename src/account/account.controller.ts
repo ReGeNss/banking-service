@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete, Patch, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Body, Delete, Patch, UseGuards, ForbiddenException } from "@nestjs/common";
 import { AccountService } from "./account.service";
 import { OpenAccountDto } from "./dtos/open-account.dto";
 import { CloseAccountDto } from "./dtos/close-account.dto";
@@ -29,7 +29,7 @@ export class AccountController {
   @Post('open')
   openAccount(@CurrentUserId() userId:number ,@Body() body: OpenAccountDto) {
     if(body.userId !== userId){
-      throw new Error('You can only open an account for yourself');
+      throw new ForbiddenException('You can only open an account for yourself');
     }
     return this.accountService.openAccount(body.userId, body.currency);
   }
@@ -55,7 +55,7 @@ export class AccountController {
   async isAccountOwnerCheck(userId: number, accountId: number) {
     const isOwner = await this.accountService.isAccountOwner(userId, accountId);
     if (!isOwner) {
-      throw new Error('You are not the owner of this account');
+      throw new ForbiddenException('You are not the owner of this account');
     }
   }
 

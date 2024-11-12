@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from "../prisma.servise";
 
 @Injectable()
@@ -60,7 +60,7 @@ export class AccountService {
       }
     });
     if(!fromAccount || !toAccount) {
-      throw new Error('Account not found');
+      throw new NotFoundException('Account not found');
     }
     if(fromAccount.currency !== toAccount.currency) {
       let exchangeRate = await this.getExchangeRate(fromAccount.currency, toAccount.currency);
@@ -69,7 +69,7 @@ export class AccountService {
     }
 
     if (userBalance < transferSum) {
-      throw new Error('Insufficient funds');
+      throw new BadRequestException('Insufficient funds');
     }
     return this.prisma.$transaction([
       this.prisma.account.update({
@@ -105,7 +105,7 @@ export class AccountService {
     )
     const balance = account.balance;
     if(balance < amount) {
-      throw new Error('Insufficient funds');
+      throw new BadRequestException('Insufficient funds');
     }
     return this.prisma.account.update({
       where: {
@@ -138,7 +138,7 @@ export class AccountService {
     let fromCurrencyFormated = fromCurrency.toLowerCase();
     let toCurrencyFormated = toCurrency.toLowerCase();
     let response = await fetch(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${fromCurrencyFormated}.json`);
-    if(!response.ok) throw new Error('Sorry, there was an error in currency conversion, please try again later.');
+    if(!response.ok) throw new InternalServerErrorException('Sorry, there was an error in currency conversion, please try again later.');
 
     let json = await response.json();
     let currencyExchangesRate = JSON.parse(JSON.stringify(json));
