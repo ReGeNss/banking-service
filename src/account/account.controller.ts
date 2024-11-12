@@ -40,10 +40,7 @@ export class AccountController {
 
   @Post('open')
   openAccount(@CurrentUserId() userId:number ,@Body() body: OpenAccountDto) {
-    if(body.userId !== userId){
-      throw new ForbiddenException('You can only open an account for yourself');
-    }
-    return this.accountService.openAccount(body.userId, body.currency);
+    return this.accountService.openAccount(userId, body.currency);
   }
 
   @Delete('close')
