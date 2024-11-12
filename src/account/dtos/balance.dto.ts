@@ -1,8 +1,8 @@
-import {IsNumber, IsISO4217CurrencyCode} from "class-validator";
+import { IsISO4217CurrencyCode, IsNumberString } from "class-validator";
 
 export class BalanceDto{
-  @IsNumber()
-  accountId: number
+  @IsNumberString()
+  accountId: string
 
   @IsISO4217CurrencyCode()
   currency: string

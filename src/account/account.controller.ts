@@ -1,29 +1,41 @@
-import { Controller, Get, Post, Body, Delete, Patch, UseGuards, ForbiddenException } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Delete,
+  Patch,
+  UseGuards,
+  ForbiddenException,
+  Query,
+  ParseIntPipe
+} from "@nestjs/common";
 import { AccountService } from "./account.service";
 import { OpenAccountDto } from "./dtos/open-account.dto";
 import { CloseAccountDto } from "./dtos/close-account.dto";
 import { TransferDto } from "./dtos/transfer.dto";
 import { WithdrawDto } from "./dtos/withdraw.dto";
 import { BalanceDto } from "./dtos/balance.dto";
-import { DepositHistoryDto } from "./dtos/deposit-history.dto";
 import {CurrentUserId } from "../decorators/current-user.decorator";
 import { AuthGuard } from "../auth/auth.guard";
+import { ApiBearerAuth } from "@nestjs/swagger";
 
+@ApiBearerAuth('access-token')
 @UseGuards(AuthGuard)
 @Controller('account')
 export class AccountController {
   constructor(private accountService: AccountService) {}
 
   @Get('balance')
-  async balance(@CurrentUserId() userId: number,@Body() body:  BalanceDto) {
-    await this.isAccountOwnerCheck(userId, body.accountId);
-    return this.accountService.getBalance(body.accountId, body.currency);
+  async balance(@CurrentUserId() userId: number, @Query() query: BalanceDto) {
+    await this.isAccountOwnerCheck(userId, parseInt(query.accountId));
+    return this.accountService.getBalance(parseInt(query.accountId), query.currency);
   }
 
   @Get('depositHistory')
-  async getDepositHistory(@CurrentUserId() userId:number,@Body() body: DepositHistoryDto ) {
-    await this.isAccountOwnerCheck(userId, body.accountId);
-    return this.accountService.getDepositHistory(body.accountId);
+  async getDepositHistory(@CurrentUserId() userId:number,@Query('accountId',ParseIntPipe) accountId: number) {
+    await this.isAccountOwnerCheck(userId, accountId);
+    return this.accountService.getDepositHistory(accountId);
   }
 
   @Post('open')
