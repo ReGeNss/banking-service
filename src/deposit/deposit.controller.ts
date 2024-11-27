@@ -15,7 +15,7 @@ export class DepositController {
   @Public()
   @Get('calculate')
   calculateProfit(@Query() query: CalculateProfitDto) {
-    return this.depositService.calculateProfit(query.percent,query.amount, query.term);
+    return this.depositService.calculateProfit(parseInt(query.percent),parseInt(query.amount),parseInt(query.term));
   }
 
   @ApiBearerAuth('access-token')

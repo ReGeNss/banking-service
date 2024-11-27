@@ -2,9 +2,9 @@ import { IsInt, IsNumber, IsNumberString } from "class-validator";
 
 export class CalculateProfitDto {
   @IsNumberString()
-  percent: number;
+  percent: string;
   @IsNumberString()
-  amount: number;
+  amount: string;
   @IsNumberString()
-  term: number;
+  term: string;
 }
