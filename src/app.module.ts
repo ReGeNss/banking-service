@@ -5,7 +5,7 @@ import { DepositModule } from './deposit/deposit.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
 import { JwtModule } from "@nestjs/jwt";
-import { jwtConstants } from "./constants";
+
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { jwtConstants } from "./constants";
     AdminModule,
     JwtModule.register({
       global: true,
-      secret: jwtConstants.secret,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },
     })
   ],

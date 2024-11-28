@@ -1,17 +1,25 @@
-import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  InternalServerErrorException,
+  ForbiddenException
+} from '@nestjs/common';
 import { PrismaService } from "../prisma.servise";
 
 @Injectable()
 export class AccountService {
   constructor(private prisma: PrismaService) {}
 
-  async isAccountOwner(userId: number, accountId: number) {
+  async isAccountOwnerCheck(userId: number, accountId: number) {
     const account = await this.prisma.account.findFirst({
       where: {
         id: accountId
       }
     });
-    return account.userId === userId;
+    if (account.userId !== userId) {
+      throw new ForbiddenException('You are not the owner of this account');
+    }
   }
 
   async getDepositHistory(accountId: number) {
@@ -40,6 +48,19 @@ export class AccountService {
     return this.prisma.account.delete({
       where: {
         id: accountId
+      }
+    });
+  }
+
+  async charge(accountId: number, amount: number) {
+    return this.prisma.account.update({
+      where: {
+        id: accountId
+      },
+      data: {
+        balance: {
+          increment: amount
+        }
       }
     });
   }

@@ -1,6 +1,6 @@
 import { IsNumber } from 'class-validator'
 
-export class WithdrawDto {
+export class changeBalanceDto {
   @IsNumber()
   accountId: number
   @IsNumber()
