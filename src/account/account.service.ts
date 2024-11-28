@@ -22,6 +22,23 @@ export class AccountService {
     }
   }
 
+  async isAccountActiveCheck(accountId: number) {
+    const account = await this.prisma.account.findFirst({
+      where: {
+        id: accountId
+      }
+    });
+    let userId = account.userId;
+    let user = await this.prisma.user.findFirst({
+        where: {
+            id: userId
+        }
+        });
+    if(!user.isActive) {
+      throw new BadRequestException('Account is blocked');
+    }
+  }
+
   async getDepositHistory(accountId: number) {
     const account = await this.prisma.account.findFirst({
       where: {
@@ -45,6 +62,7 @@ export class AccountService {
   }
 
   async closeAccount(accountId: number) {
+    await this.isAccountActiveCheck(accountId);
     return this.prisma.account.delete({
       where: {
         id: accountId
@@ -53,6 +71,7 @@ export class AccountService {
   }
 
   async charge(accountId: number, amount: number) {
+    await this.isAccountActiveCheck(accountId);
     return this.prisma.account.update({
       where: {
         id: accountId
@@ -66,6 +85,7 @@ export class AccountService {
   }
 
   async transfer(fromAccountId: number, toAccountId: number, amount: number) {
+    await this.isAccountActiveCheck(fromAccountId);
     let transferSum = amount;
 
     const fromAccount = await this.prisma.account.findFirst({
@@ -117,6 +137,7 @@ export class AccountService {
   }
 
   async withdraw(accountId: number, amount: number) {
+    await this.isAccountActiveCheck(accountId);
     const account = await this.prisma.account.findFirst(
       {
         where: {

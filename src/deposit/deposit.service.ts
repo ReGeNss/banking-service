@@ -11,7 +11,25 @@ export class DepositService {
     return newAmount;
   }
 
+  async isAccountActiveCheck(accountId: number) {
+    const account = await this.prisma.account.findFirst({
+      where: {
+        id: accountId
+      }
+    });
+    let userId = account.userId;
+    let user = await this.prisma.user.findFirst({
+      where: {
+        id: userId
+      }
+    });
+    if(!user.isActive) {
+      throw new BadRequestException('Account is blocked');
+    }
+  }
+
   async createDeposit(accountId: number, amount: number, term: number, percent:number) {
+    await this.isAccountActiveCheck(accountId);
     const account = await this.prisma.account.findFirst({ where: { id: accountId } });
     if(account.balance < amount) throw new BadRequestException('Insufficient funds');
     let data = new Date();
